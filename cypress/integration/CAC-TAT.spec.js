@@ -1,0 +1,175 @@
+/// <reference types="cypress" />
+
+describe('Central de Atendimento ao Cliente TAT', function () {
+  beforeEach('verifica o título da aplicação', function () {
+    cy.visit('./src/index.html')
+  })
+  //aula 1
+  it('Title', () => {
+    cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT')
+  });
+
+    //aula 1
+    it('Title', () => {
+      cy.title().should('be.equal', 'Central de Atendimento ao Cliente TAT')
+    });
+    
+  it('preenche os campos obrigatórios e envia o formulário', () => {
+    cy.get('#firstName').type('Isadora Laís')
+    cy.get('#lastName').type('Louise Lima')
+    cy.get('#email').type('isadora-lima75#andrade,com')
+    cy.get('#open-text-area').type('Lorem ipsum litora aenean donec consectetur varius accumsan praesent diam')
+    cy.get('.button').click()
+    cy.get('#white-background').should('be.visible', '')
+  });
+  //aula 2
+  it('Exercício extra 1', () => {
+    const longText = 'Lorem ipsum purus faucibus tempor, aliquet inceptos pellentesque. odio ipsum orci luctus eu per et imperdiet, fusce cursus taciti pretium et enim non porttitor, luctus ut commodo cras mattis tellus. proin viverra at odio libero cras purus convallis taciti aenean, diam etiam porta feugiat aenean leo volutpat cubilia hendrerit, sodales vivamus venenatis aliquam sit elementum hendrerit donec. platea nisi posuere mollis per litora senectus, consectetur venenatis non suscipit posuere hendrerit, habitasse diam in orci lacus. non mauris habitant suscipit hac molestie in sociosqu dolor vulputate imperdiet turpis facilisis pharetra vehicula, ultricies fringilla sociosqu arcu scelerisque habitant lobortis cursus lobortis est vitae ultricies.'
+    cy.get('#open-text-area').type(longText, {delay: 0})
+  });
+
+  it('Exercício extra 2 - email com formatação inválida', () => {
+    cy.get('#firstName').type('Isadora Laís')
+    cy.get('#lastName').type('Louise Lima')
+    cy.get('#email').type('isadora-lima75#andrade,com')
+    cy.get('#open-text-area').type('Lorem ipsum litora aenean donec consectetur varius accumsan praesent diam')
+    cy.get('.button').click()
+    cy.get('.error > strong').should('be.visible', '')
+  });
+
+  it('Exercício extra 3 - passar letras no campo telefone', () => {
+    cy.get('#phone').type('asaddsfdf').should('have.value', '')
+  });
+
+  it('Exercício extra 4 - exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
+    cy.get('#firstName').type('Isadora Laís')
+    cy.get('#lastName').type('Louise Lima')
+    cy.get('#email').type('isadora-lima75@andrade.com')
+    cy.get('#open-text-area').type('Lorem ipsum litora aenean donec consectetur varius accumsan praesent diam')
+    cy.get('#phone-checkbox').click()
+    cy.get('.button').click()
+    cy.get('.error > strong').should('be.visible', '')
+  });
+
+  it('Exercício extra 5 - Usar clear ', () => {
+    cy.get('#firstName').type('Isadora Laís').should('have.value', 'Isadora Laís')
+    cy.get('#firstName').clear().should('have.value', '')
+    cy.get('#lastName').type('Louise Lima').should('have.value', 'Louise Lima')
+    cy.get('#lastName').clear().should('have.value', '')
+    cy.get('#email').type('isadora-lima75@andrade.com').should('have.value', 'isadora-lima75@andrade.com')
+    cy.get('#email').clear().should('have.value', '')
+    cy.get('#phone').type('1234567890').should('have.value', '1234567890')
+    cy.get('#phone').clear().should('have.value', '')
+  });
+
+  it('Exercício extra 6 - exibe mensagem de erro ao submeter o formulário sem preencher os campos obrigatórios', () => {
+    cy.get('.button').click()
+    cy.get('.error > strong').should('be.visible', '')
+  });
+
+  it('Exercício extra 7 - envia o formuário com sucesso usando um comando customizado', () => {
+    cy.fillMandatoryFieldsAndSubmit()
+  });
+
+  it('Exercício extra 8 - cy.contains()', () => {
+    cy.get('#firstName').type('Isadora Laís')
+    cy.get('#lastName').type('Louise Lima')
+    cy.get('#email').type('isadora-lima75@andrade.com')
+    cy.get('#open-text-area').type('teste')
+    
+    cy.contains('.button','Enviar').click()
+  });
+  //aula 3
+  //Selecionando opções em campos de seleção suspensa
+  it('seleciona um produto (YouTube) por seu texto', () => {
+    cy.get('#product').select('youtube')
+    cy.get('#product').should('have.value', 'youtube')
+  });
+  //Exercício extra 1
+  it('seleciona um produto (Mentoria) por seu valor (value)', () => {
+    cy.get('#product').select('mentoria')
+    cy.get('#product').should('have.value', 'mentoria')
+  });
+  //Exercício extra 2
+  it('seleciona um produto (Blog) por seu índice', () => {
+    cy.get('#product').select(1)
+    cy.get('#product').should('have.value', 'blog')
+  });
+  //aula 4
+  //Marcando inputs do tipo radio
+  it('marca o tipo de atendimento "Feedback"', () => {
+    cy.get('input[type="radio"][value="feedback"]').check()
+    cy.get(':nth-child(4) > input').should('have.value', 'feedback')
+  });
+
+  //Exercício extra
+  it('marca cada tipo de atendimento', () => {
+    cy.get('input[type="radio"]')
+    .should('have.length',3)
+    .each(function($radio) {
+      cy.wrap($radio).check()
+      cy.wrap($radio) .should('be.checked')
+    })
+  });
+  //aula 5
+  //Marcando (e desmarcando) inputs do tipo checkbox
+  //Exercício
+  it('marca ambos checkboxes, depois desmarca o último', () => {
+    cy.get('input[type="checkbox"]').check()
+    .should('be.checked')
+    .last()
+    .uncheck()
+    .should('not.be.checked')
+  });
+  //Exercício extra
+  it('exibe mensagem de erro quando o telefone se torna obrigatório mas não é preenchido antes do envio do formulário', () => {
+    cy.get('#firstName').type('Isadora Laís')
+    cy.get('#lastName').type('Louise Lima')
+    cy.get('#email').type('isadora-lima75@andrade.com')
+    cy.get('#open-text-area').type('Lorem ipsum litora aenean donec consectetur varius accumsan praesent diam')
+    cy.get('#phone-checkbox').check()
+    cy.get('.button').click()
+    cy.get('.error > strong').should('be.visible', '')
+  });
+    //aula 6
+    //Fazendo upload de arquivos com Cypress
+    //Exercício
+  it('seleciona um arquivo da pasta fixtures', () => {
+    cy.get('#file-upload')
+    .should('not.have.value')
+    cy.get('#file-upload').selectFile('cypress/fixtures/example.json')
+    .should(function($input){
+      expect($input[0].files[0].name).to.equal('example.json')
+    })
+  });
+  //Exercício extra 1
+  it('seleciona um arquivo simulando um drag-and-drop', () => {
+    cy.get('#file-upload')
+    .should('not.have.value')
+    cy.get('#file-upload').selectFile('cypress/fixtures/example.json',{action:'drag-drop'})
+    .should(function($input){
+      expect($input[0].files[0].name).to.equal('example.json')
+    })
+  });
+  //Exercício extra 2
+  it('seleciona um arquivo utilizando uma fixture para a qual foi dada um alias', () => {
+      cy.fixture('example.json').as('sampleFile')
+      cy.get('input[type="file"]')
+      .selectFile('@sampleFile')
+      .should(function($input){
+        expect($input[0].files[0].name).to.equal('example.json')
+      })
+  });
+  //aula 7
+  //Lidando com links que abrem em outra aba
+  //Exercício
+  it('verifica que a política de privacidade abre em outra aba sem a necessidade de um clique', () => {
+    cy.get('#privacy a').should('have.attr','target','_blank')
+  });
+//Exercício extra 1
+  it('acessa a página da política de privacidade removendo o target e então clicando no link', () => {
+    cy.get('#privacy a').invoke('removeAttr','target').click()
+    cy.contains('Talking About Testing').should('be.visible')
+  });
+  
+})
