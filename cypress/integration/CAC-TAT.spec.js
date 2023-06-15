@@ -249,4 +249,55 @@ describe('Central de Atendimento ao Cliente TAT', function () {
   
       cy.get('.error').should('not.be.visible')
     });
+
+   //Invoque atributos e métodos de elementos com o comando .invoke()
+   it('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('.success')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Mensagem enviada com sucesso.')
+      .invoke('hide')
+      .should('not.be.visible')
+    cy.get('.error')
+      .should('not.be.visible')
+      .invoke('show')
+      .should('be.visible')
+      .and('contain', 'Valide os campos obrigatórios!')
+      .invoke('hide')
+      .should('not.be.visible')
+  })
+
+  //Crie um teste chamado preenche a area de texto usando o comando invoke
+  it('preenche a area de texto usando o comando invoke', () => {
+    const longText = Cypress._.repeat('1234567890', 20)
+
+    cy.get('#open-text-area').invoke('val', longText).should('have.value', longText)
+  });
+
+  //cy.request()
+  //executar requisições HTTP
+  //possibilidade de executar comandos à nível de rede
+  //inspecionar > console
+  it('faz uma requisição HTTP', () => {
+      cy.request('https://cac-tat.s3.eu-central-1.amazonaws.com/index.html').should(function(response){
+        const {status, statusText, body} = response
+        expect(response.status).to.equal(200)
+        expect(response.statusText).to.equal('OK')
+        expect(body).to.include('CAC TAT')
+      })
+  });
+
+  //aula 12
+  //Desafio (encontre o gato) 🐈
+  it.only('exibe e esconde as mensagens de sucesso e erro usando o .invoke', () => {
+    cy.get('#cat')
+      .invoke('show')
+      .should('be.visible')
+      cy.get('#title')
+      .invoke('text', 'CAT TAT')
+      cy.get('#subtitle')
+      .invoke('text', 'Eu 💖 gatos!')
+
+  })
 })
